@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE xml>
+<configuration status="OFF">  
+  <appenders>  
+    <Console name="Console" target="SYSTEM_OUT">  
+    	<ThresholdFilter level="debug" onMatch="ACCEPT" onMismatch="DENY"/>
+    	<PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>  
+    </Console>  
+    
+    <RollingFile name="Error" fileName="syncLogs/error.log" filePattern="syncLogs/$${date:yyyy-MM}/app-%d{MM-dd-yyyy}-%i.log.gz">
+        <ThresholdFilter level="error" onMatch="ACCEPT" onMismatch="DENY"/>
+    	<PatternLayout pattern="%d{yyyy-MM-dd 'at' HH:mm:ss z} %-5level %class{36} %L %M - %msg%xEx%n"/>
+    	<SizeBasedTriggeringPolicy size="20MB"/>
+    </RollingFile>   
+    
+    <RollingFile name="AppLogFile" fileName="syncLogs/app.log" filePattern="syncLogs/$${date:yyyy-MM}/app-%d{MM-dd-yyyy}-%i.log.gz">
+    	<PatternLayout pattern="%d{yyyy-MM-dd 'at' HH:mm:ss z} %-5level %class{36} %L %M - %msg%xEx%n"/>
+    	<SizeBasedTriggeringPolicy size="20MB"/>
+    </RollingFile>
+    
+  </appenders>  
+  <loggers>  
+    <root level="debug">  
+        <appender-ref ref="Console"/>  
+    	<appender-ref ref="Error" />
+        <appender-ref ref="AppLogFile"/>
+    </root>  
+  </loggers>  
+</configuration> 
