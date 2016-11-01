@@ -11,7 +11,7 @@
 	<classpathentry kind="lib" path="lib/jsr311-api-1.1.1.jar"/>
 	<classpathentry kind="lib" path="lib/gson-2.7.jar"/>
 	<classpathentry kind="lib" path="lib/mysql-connector-java-5.1.39-bin.jar"/>
-	<classpathentry kind="lib" path="lib/log4j-api-2.7.jar"/>
+	<classpathentry kind="lib" path="lib/log4j-api-2.7.jar" sourcepath="/Users/Morris/.m2/repository/org/apache/logging/log4j/log4j-api/2.7/log4j-api-2.7-sources.jar"/>
 	<classpathentry kind="lib" path="lib/log4j-core-2.7.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

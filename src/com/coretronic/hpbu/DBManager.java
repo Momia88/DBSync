@@ -41,11 +41,11 @@ public class DBManager {
 	private String KEY_API_NAME = "ApiName";
 	private String apiName = "CreateSiteState";
 	private String dataFormatStr = "yyyyMMddHHmmss";
-	private Gson gson = new Gson();
 	private String PRIVATE_KEY_DATE = "P_DATE";
 	private String PRIVATE_KEY_TIME = "TIME";
 	private String PRIVATE_KEY_MODEL_NO = "MODEL_NO";
 	private String PRIVATE_KEY_PRODUCT_SN = "PRODUCT_SN";
+	private Gson gson = new Gson();
 
 	public List<ChromaObj> getDuration(String url, Calendar calendar, int durationHour, int overTime) {
 
@@ -53,13 +53,12 @@ public class DBManager {
 		sCalendar.setTime(calendar.getTime());
 		DateFormat dateFormat = new SimpleDateFormat(dataFormatStr);
 		String startTime = dateFormat.format(sCalendar.getTime());
-		logger.info("Sync Date: " + startTime);
 		sCalendar.add(Calendar.HOUR, durationHour);
 		sCalendar.add(Calendar.SECOND, overTime);
 		String endTime = dateFormat.format(sCalendar.getTime());
+		logger.info("Sync DateTime: " + startTime + " - " + endTime);
 
 		String webUrl = url + "?queryStartDateTime=" + startTime + "&queryEndDateTime=" + endTime;
-		System.out.println(webUrl);
 		Client client = Client.create();
 		ClientResponse response = client.resource(webUrl).accept(MediaType.APPLICATION_JSON).header(KEY_API_KEY, apiKey)
 				.header(KEY_API_NAME, apiName).get(ClientResponse.class);
@@ -78,6 +77,9 @@ public class DBManager {
 
 	public int saveToDB(Connection connect, List<ChromaObj> chromaList) {
 		int status = 0;
+		int syncCount = 0;
+		int existCount = 0;
+		int errorCount = 0;
 		String columnStr = "";
 		String valueStr = "";
 		HashMap<String, String> keypart = new HashMap<>();
@@ -95,14 +97,19 @@ public class DBManager {
 					PreparedStatement preparedStatement = connect.prepareStatement(sqlStr);
 					status = preparedStatement.executeUpdate();
 					if (status > 0) {
-						logger.info("Sync Success!!");
+						syncCount++;
+					} else {
+						errorCount++;
 					}
+				} else {
+					existCount++;
 				}
 			} catch (Exception e) {
 				logger.error("Error", e);
 			}
-
 		}
+		String str = "Sync: " + syncCount + "   Exits: " + existCount + "   Error: " + errorCount;
+		logger.info(str);
 		return status;
 	}
 
@@ -162,10 +169,6 @@ public class DBManager {
 			PreparedStatement preparedStatement = connect.prepareStatement(sqlStr);
 			resultSet = preparedStatement.executeQuery();
 			while (resultSet.next()) {
-				if (resultSet.getInt(1) > 0) {
-					logger.info("Exist: " + "P_DATE='" + pDate + "',TIME='" + pTime + "',MODEL_NO='" + pModel
-							+ "',PRODUCT_SN='" + pProductSN + "'");
-				}
 				return resultSet.getInt(1);
 			}
 		} catch (Exception e) {
@@ -173,8 +176,8 @@ public class DBManager {
 		}
 		return 0;
 	}
-	
-	public int[] strToIntArray(String str){
+
+	public int[] strToIntArray(String str) {
 		int[] arr = new int[6];
 		arr[0] = Integer.valueOf(str.substring(0, 4));
 		arr[1] = Integer.valueOf(str.substring(4, 6));
@@ -184,5 +187,5 @@ public class DBManager {
 		arr[5] = Integer.valueOf(str.substring(12));
 		return arr;
 	}
-	
+
 }

@@ -36,7 +36,7 @@ public class SyncMain {
 			startCalendar.add(Calendar.HOUR, -1);
 		} else if (args.length == 1) {
 			int[] startDate = queryManager.strToIntArray(args[0]);
-			startCalendar.set(startDate[0], startDate[1], startDate[2], startDate[3], startDate[4], startDate[5]);
+			startCalendar.set(startDate[0], startDate[1]-1, startDate[2], startDate[3], startDate[4], startDate[5]);
 		} else {
 			if (!args[0].matches("[0-9]{14}") || !args[1].matches("[0-9]{14}")) {
 				logger.error("Error", "input date formate error!!");
@@ -45,11 +45,9 @@ public class SyncMain {
 			int[] startDate = queryManager.strToIntArray(args[0]);
 			int[] endDate = queryManager.strToIntArray(args[1]);
 
-			startCalendar.set(startDate[0], startDate[1], startDate[2], startDate[3], startDate[4], startDate[5]);
-			stopCalendar.set(endDate[0], endDate[1], endDate[2], endDate[3], endDate[4], endDate[5]);
+			startCalendar.set(startDate[0], startDate[1]-1, startDate[2], startDate[3], startDate[4], startDate[5]);
+			stopCalendar.set(endDate[0], endDate[1]-1, endDate[2], endDate[3], endDate[4], endDate[5]);
 		}
-
-		logger.info("Date: " + startCalendar.getTime() + " / " + stopCalendar.getTime());
 		
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
